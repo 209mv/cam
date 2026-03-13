@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0;background:black">
+
+<video id="v" autoplay playsinline style="width:100vw;height:100vh"></video>
+
+<div style="position:fixed;top:10px;left:10px;background:black;color:white;padding:8px">
+<button onclick="start()">Enable Camera</button>
+<select id="cams"></select>
+<button onclick="go()">Start</button>
+</div>
+
+<script>
+let v=document.getElementById("v")
+let cams=document.getElementById("cams")
+
+async function start(){
+await navigator.mediaDevices.getUserMedia({video:true})
+let d=await navigator.mediaDevices.enumerateDevices()
+cams.innerHTML=""
+d.forEach(x=>{
+if(x.kind=="videoinput"){
+let o=document.createElement("option")
+o.value=x.deviceId
+o.text=x.label||"Camera"
+cams.appendChild(o)
+}
+})
+}
+
+async function go(){
+let s=await navigator.mediaDevices.getUserMedia({
+video:{deviceId:{exact:cams.value}},
+audio:true
+})
+v.srcObject=s
+v.requestFullscreen()
+}
+</script>
+
+</body>
+</html>
